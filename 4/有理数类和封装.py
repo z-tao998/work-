@@ -87,5 +87,6 @@ def test():
             continue
         if result != t[1]:
             print('Error: %s != %s' % (t[0], t[1]))
+    print('Test completed.')
 if __name__ == '__main__':
     test()
