@@ -15,6 +15,8 @@ def gcd(a, b):
     
 class Rational:
     def __init__(self, n=0, d=1):
+        if d == 0:
+            raise ZeroDivisionError('Denominator cannot be zero')
         _nu = n; _de = d
         self.__dict__['nu'] = _nu; self.__dict__['de'] = _de
     def __setattr__(self, name, value):
