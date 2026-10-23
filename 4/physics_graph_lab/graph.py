@@ -21,7 +21,7 @@ class StateGraph:
             raise ValueError("Both ends of an edge must be in the graph")
 
         ### TODO 2.1: 为自身 edge 列表添加边 (source, target, weight)
-        
+        self.edges.append((source, target, weight))
         ### TODO 2.1 结束
 
     def incoming(self, target):
@@ -30,6 +30,8 @@ class StateGraph:
             raise ValueError(f"Unknown node: {target}")
         return [
             ### TODO 2.2: 返回以 target 节点为末尾的所有边对 (source, weight)
-
+            (source, weight)
+            for source, dest, weight in self.edges
+            if dest == target
             ### TODO 2.2 结束
         ]

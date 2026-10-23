@@ -234,7 +234,7 @@ class LiveSimulation:
         for name, (_, _, label) in self.node_artists.items():
             label.set_text(f"{state[name]:.3f}")
 
-        for arrow, label, source, _target, weight in self.edge_artists:
+        for arrow, label, source, target, weight in self.edge_artists:
             # Recompute labels directly from current model state, not static samples.
             message = self.coupled.message(
                 source, target, weight, state

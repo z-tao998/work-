@@ -18,7 +18,10 @@ class DynamicsModel:
         """Return an independent record of the current model state."""
 
         ### TODO 1.1: 补全 snapshot 函数，其返回一个字典，记录 time 和 state
-        
+        return {
+            "time": self.time,
+            "state": dict(self.state),
+        }
         ### TODO 1.1 结束
 
     def derivatives(self, state):
@@ -33,7 +36,9 @@ class DynamicsModel:
         rates = self.derivatives(old_state)
 
         ### TODO 1.2: 补全对 state 和 time 的更新
-
+        for name in self.state:
+            self.state[name] = old_state[name] + rates[name] * self.dt
+        self.time += self.dt
         ### TODO 1.2 结束
 
         record = self.snapshot()
@@ -46,7 +51,8 @@ class DynamicsModel:
             raise ValueError("steps must not be negative")
 
         ### TODO 1.3: 执行 steps 步动力学演化
-
+        for _ in range(steps):
+            self.step()
         ### TODO 1.3 结束
 
         return self.history
@@ -55,13 +61,13 @@ class DynamicsModel:
 ### TODO 1.4: 补全类之间的继承关系: 
 ### DynamicsModel -> IndependentDynamics -> GraphDynamics;
 
-class IndependentDynamics():
+class IndependentDynamics(DynamicsModel):
     """dx_i/dt = base_rate_i - damping_i * x_i."""
 
     def __init__(self, initial_state, base_rates, damping, dt=1.0):
 
         ### TODO 1.5: 补全类继承的初始化 super().__init__
-
+        super().__init__(initial_state, dt=dt)
         ### TODO 1.5 结束
 
         self.base_rates = dict(base_rates)
@@ -71,17 +77,20 @@ class IndependentDynamics():
 
     def derivatives(self, state):
         ### TODO 1.6: 根据手册中的公式补全动力学演化方程
-
+        return {
+            name: self.base_rates[name] - self.damping[name] * state[name]
+            for name in state
+        }
         ### TODO 1.6 结束
 
 
-class GraphDynamics():
+class GraphDynamics(IndependentDynamics):
     """Include messages from incoming edges in each state's derivative."""
 
     def __init__(self, initial_state, base_rates, damping, graph, dt=1.0):
 
         ### TODO 1.7: 补全类继承的初始化 super().__init__
-        
+        super().__init__(initial_state, base_rates, damping, dt=dt)
         ### TODO 1.7 结束
 
         if set(graph.nodes) != set(self.state):
@@ -92,21 +101,25 @@ class GraphDynamics():
         """Message from node source to node target (target is for clarity)."""
         
         ### TODO 1.8: 根据手册中的公式补全 GNN 的消息传递
-
+        return weight * state[source]
         ### TODO 1.8 结束
 
     def aggregate(self, node, state):
         """Sum incoming messages addressed to one node."""
         
         ### TODO 1.9: 补全 GNN 的消息聚合，这里只做简单求和 (sum)
-
+        return sum(
+            self.message(source, node, weight, state)
+            for source, weight in self.graph.incoming(node)
+        )
         ### TODO 1.9 结束
 
     def derivatives(self, state):
         rates = super().derivatives(state)
 
         ### TODO 1.10: 用聚合到的信息对 GNN 每个节点的 rates 作更新
-
+        for node in state:
+            rates[node] += self.aggregate(node, state)
         ### TODO 1.10 结束
 
         return rates
