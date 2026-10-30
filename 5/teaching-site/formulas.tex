@@ -1,0 +1,39 @@
+% 逻辑回归实验：PPT / 手册公式源
+% PPT 使用 matplotlib mathtext 渲染为透明 PNG；
+% 手册使用 Word 原生公式（OMML），可在 Word 中双击编辑。
+% 编译示例：pdflatex formulas.tex
+
+\documentclass[11pt]{article}
+\usepackage{amsmath,amssymb}
+\usepackage[margin=2cm]{geometry}
+\begin{document}
+
+\section*{线性分数与 sigmoid}
+\begin{align}
+z &= \mathbf{w}^{\top}\mathbf{x} + b \\
+p &= \sigma(z) = \frac{1}{1+e^{-z}}
+\end{align}
+
+\section*{伯努利似然与 BCE}
+\begin{align}
+P(y=1\mid x) &= p, \qquad P(y=0\mid x) = 1-p \\
+L &= \prod_i p_i^{y_i}(1-p_i)^{1-y_i} \\
+\mathrm{BCE} &= -\left[y\log p + (1-y)\log(1-p)\right]
+\end{align}
+
+\section*{正则化}
+\begin{align}
+R_{L1}(w) &= \lambda\sum_j |w_j| \\
+R_{L2}(w) &= \lambda\sum_j w_j^2 \\
+L_{\mathrm{total}} &= \mathrm{BCE} + \lambda R(w)
+\end{align}
+
+\section*{评估指标}
+\begin{align}
+\mathrm{Accuracy} &= \frac{TP+TN}{N} \\
+\mathrm{Precision} &= \frac{TP}{TP+FP} \\
+\mathrm{Recall} &= \frac{TP}{TP+FN} \\
+F_1 &= \frac{2PR}{P+R}
+\end{align}
+
+\end{document}
